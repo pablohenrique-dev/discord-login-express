@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=social-auth
+      - POSTGRES_PASSWORD=social-auth
+      - POSTGRES_DB=api-social-auth
