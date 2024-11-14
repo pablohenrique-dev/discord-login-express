@@ -1,8 +1,17 @@
 import { User as PrismaUser } from "@prisma/client";
 
-export type User = Omit<PrismaUser, "id" | "created_at" | "updated_at">;
+export type User = PrismaUser;
+
+export interface CreateUserParams {
+  name: string;
+  email: string | null;
+  avatar: string | null;
+  provider: string;
+  user_provider_id: string;
+}
 
 export interface UserRepository {
-  create: (data: User) => Promise<User>;
+  create: (data: CreateUserParams) => Promise<User>;
   findByProviderId: (providerId: string) => Promise<User | null>;
+  findByUserId: (userId: string) => Promise<User | null>;
 }

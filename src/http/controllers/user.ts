@@ -1,5 +1,7 @@
 import { authConfig } from "@/config/auth";
 import { env } from "@/env";
+import { userTokenParamSchema } from "@/schemas/controller/user";
+import { makeGetProfileUseCase } from "@/use-cases/factories/make-get-profile-use-case";
 import { User } from "@prisma/client";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
@@ -29,7 +31,7 @@ export class UserController {
       res.cookie("accessToken", accessToken, {
         path: "/",
         secure: true,
-        sameSite: "strict",
+        sameSite: "none",
         httpOnly: true,
         maxAge: MILLISECONDS_IN_ONE_HOUR,
       });
@@ -37,7 +39,7 @@ export class UserController {
       res.cookie("refreshToken", refreshToken, {
         path: "/",
         secure: true,
-        sameSite: "strict",
+        sameSite: "none",
         httpOnly: true,
         maxAge: MILLISECONDS_IN_SEVEN_DAYS,
       });
@@ -61,6 +63,20 @@ export class UserController {
       httpOnly: true,
     });
 
-    return res.status(200).json();
+    return res.redirect(env.BASE_CLIENT_URL + "/");
+  }
+
+  async profile(req: Request, res: Response) {
+    const { id } = userTokenParamSchema.parse(req.user);
+
+    try {
+      const getProgileUseCase = makeGetProfileUseCase();
+
+      const { user } = await getProgileUseCase.execute({ userId: id });
+
+      return res.status(200).json({ user });
+    } catch (error) {
+      throw new Error("Ocorreu um erro");
+    }
   }
 }
