@@ -19,6 +19,8 @@ discordRouter.get(
   "/discord/redirect",
   passport.authenticate("discord", { session: false }),
   (req, res) => {
+    console.log("req", req.user);
+
     const accessToken = jwt.sign({}, authConfig.secret, {
       subject: req.user.id,
       expiresIn: authConfig.expiresIn["7d"],
@@ -39,7 +41,7 @@ discordRouter.get(
       httpOnly: true,
       maxAge: MILLISECONDS_IN_ONE_DAY,
     });
-    
+
     res.cookie("refreshToken", refreshToken, {
       path: "/",
       secure: true,

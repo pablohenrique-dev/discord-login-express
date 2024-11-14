@@ -1,9 +1,9 @@
 import express from "express";
-import { routes } from "./routes";
 import "@/config/passport";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { routes } from "./http/routes";
 
 export const app = express();
 

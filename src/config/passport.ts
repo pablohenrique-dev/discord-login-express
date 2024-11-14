@@ -36,7 +36,13 @@ passport.use(
           return done(null, userAlreadyExits);
         }
 
-        const { avatar, email, name, id: user_provider_id } = profile;
+        const {
+          avatar,
+          email,
+          global_name,
+          username,
+          id: user_provider_id,
+        } = profile;
 
         const avatarUrl = profile.avatar
           ? `https://cdn.discordapp.com/avatars/${user_provider_id}/${avatar}.png`
@@ -48,8 +54,7 @@ passport.use(
             avatar: avatarUrl,
             user_provider_id,
             provider: "discord",
-            first_name: name?.givenName,
-            last_name: name?.familyName,
+            name: global_name ?? username,
           },
         });
 
