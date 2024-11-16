@@ -70,9 +70,9 @@ export class UserController {
     const { id } = userTokenParamSchema.parse(req.user);
 
     try {
-      const getProgileUseCase = makeGetProfileUseCase();
+      const getProfileUseCase = makeGetProfileUseCase();
 
-      const { user } = await getProgileUseCase.execute({ userId: id });
+      const { user } = await getProfileUseCase.execute({ userId: id });
 
       return res.status(200).json({ user });
     } catch (error) {

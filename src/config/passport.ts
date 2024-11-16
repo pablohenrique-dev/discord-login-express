@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import passport from "passport";
 import { Strategy as DiscordStrategy } from "passport-discord";
 import { User } from "@prisma/client";
+import { makeRegisterUseCase } from "@/use-cases/factories/make-register-use-case";
 
 passport.serializeUser((user, done) => {
   done(null, (user as User).id);
@@ -26,16 +27,6 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        const userAlreadyExits = await prisma.user.findUnique({
-          where: {
-            user_provider_id: profile.id,
-          },
-        });
-
-        if (userAlreadyExits) {
-          return done(null, userAlreadyExits);
-        }
-
         const {
           avatar,
           email,
@@ -44,18 +35,14 @@ passport.use(
           id: user_provider_id,
         } = profile;
 
-        const avatarUrl = profile.avatar
-          ? `https://cdn.discordapp.com/avatars/${user_provider_id}/${avatar}.png`
-          : null;
+        const registerUseCase = makeRegisterUseCase();
 
-        const user = await prisma.user.create({
-          data: {
-            email,
-            avatar: avatarUrl,
-            user_provider_id,
-            provider: "discord",
-            name: global_name ?? username,
-          },
+        const { user } = await registerUseCase.execute({
+          avatar,
+          email,
+          global_name,
+          username,
+          user_provider_id,
         });
 
         return done(null, user);
