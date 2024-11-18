@@ -10,12 +10,14 @@ export function verifyJwt(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    const { sub: user_id } = verify(accessToken, authConfig.secret) as {
+    const { sub: userId, role } = verify(accessToken, authConfig.secret) as {
       sub: string;
+      role: string;
     };
 
     req.user = {
-      id: user_id,
+      id: userId,
+      role,
     };
 
     return next();

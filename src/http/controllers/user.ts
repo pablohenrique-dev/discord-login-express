@@ -13,14 +13,14 @@ export class UserController {
         return res.status(401).json({ error: "User not authenticated" });
       }
 
-      const { id } = req.user as User;
+      const { id, role } = req.user as User;
 
-      const accessToken = jwt.sign({}, authConfig.secret, {
+      const accessToken = jwt.sign({ role }, authConfig.secret, {
         subject: id,
         expiresIn: authConfig.expiresIn["1h"],
       });
 
-      const refreshToken = jwt.sign({}, authConfig.secret, {
+      const refreshToken = jwt.sign({ role }, authConfig.secret, {
         subject: id,
         expiresIn: authConfig.expiresIn["7d"],
       });
